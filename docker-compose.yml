@@ -2,19 +2,19 @@ services:
   wordpress:
     image: bitnami/wordpress:latest
     volumes:
-      - ./wordpress_data:/bitnami/wordpress
+      - wordpress_data:/bitnami/wordpress
     depends_on:
-      - database
+      - mysql
     environment:
-      - MYSQL_HOST=database
-      - MYSQL_PORT=3306
+      - ALLOW_EMPTY_PASSWORD=yes
       - WORDPRESS_DATABASE_USER=bn_wordpress
       - WORDPRESS_DATABASE_PASSWORD=bitnami
       - WORDPRESS_DATABASE_NAME=bitnami_wordpress
-      - WORDPRESS_DATABASE_HOST=database
+      - WORDPRESS_DATABASE_HOST=mysql
       - WORDPRESS_DATABASE_PORT=3306
-      - WORDPRESS_REDIS_HOST=redis
-      - WORDPRESS_REDIS_PORT=6379
+      - WORDPRESS_BLOG_NAME=blog
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     deploy:
       replicas: 2
     expose:
@@ -23,14 +23,14 @@ services:
       - front
       - back
   
-  database:
+  mysql:
     image: bitnami/mysql
     volumes:
-      - ./mysql_data:/bitnami/mysql/data
+      - mysql_data:/bitnami/mysql/data
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
-      - MYSQL_PASSWORD=bitnami
       - MYSQL_USER=bn_wordpress
+      - MYSQL_PASSWORD=bitnami
       - MYSQL_DATABASE=bitnami_wordpress
     networks:
       - back
@@ -57,9 +57,7 @@ networks:
   front:
     driver: bridge
   back:
-    driver: bridge
 
 volumes:
-  myqsl_data:
+  mysql_data:
   wordpress_data:
-  nginx:
